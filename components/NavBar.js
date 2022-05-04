@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Container, Navbar, Nav } from "react-bootstrap"
 
 export default function NavBar() {
@@ -10,14 +11,14 @@ export default function NavBar() {
                 <Navbar.Toggle aria-controls="nav" />
                 <Navbar.Collapse>
                     <Nav className="me-auto">
-                        <Nav.Link href="#">Acasa</Nav.Link>
-                        <Nav.Link href="#">Evenimente</Nav.Link>
-                        <Nav.Link href="#">Strangeri de fonduri</Nav.Link>
-                        <Nav.Link href="#">Contact</Nav.Link>
+                        <Link href="/acasa" passHref><Nav.Link>Acasa</Nav.Link></Link>
+                        <Link href="/evenimente" passHref><Nav.Link>Evenimente</Nav.Link></Link>
+                        <Link href="/fonduri" passHref><Nav.Link>Strangeri de fonduri</Nav.Link></Link>
+                        <Link href="/contact" passHref><Nav.Link>Contact</Nav.Link></Link>
                     </Nav>
                     <Nav>
-                        <Nav.Link href="#">Login</Nav.Link>
-                        <Nav.Link href="#">Register</Nav.Link>
+                        <Nav.Link href="/login">Login</Nav.Link>
+                        <Nav.Link href="/register">Register</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container> 
