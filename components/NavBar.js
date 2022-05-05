@@ -1,7 +1,28 @@
+import { useAuthState } from "react-firebase-hooks/auth"
+import { getAuth, signOut } from "firebase/auth"
+import app from "../firebase/clientApp"
 import Link from "next/link"
-import { Container, Navbar, Nav } from "react-bootstrap"
+import { Container, Navbar, Nav, Form, Button } from "react-bootstrap"
+
+const LoggedForm = ({user}) => (
+    <Form className="d-flex">
+        <Form.Text className="me-3">{user.email}</Form.Text>
+        <Button onClick={() => signOut(getAuth(app))}>
+            Log off
+        </Button>
+    </Form>
+)
+
+const LoginRegisterNav = () => (
+    <Nav>
+        <Nav.Link href="/login">Login</Nav.Link>
+        <Nav.Link href="/register">Register</Nav.Link>
+    </Nav>
+)
 
 export default function NavBar() {
+    const [user, loading, error] = useAuthState(getAuth(app))
+
     return (
         <Navbar expand="lg">
             <Container>
@@ -16,11 +37,8 @@ export default function NavBar() {
                         <Link href="/fonduri" passHref><Nav.Link>Strangeri de fonduri</Nav.Link></Link>
                         <Link href="/contact" passHref><Nav.Link>Contact</Nav.Link></Link>
                     </Nav>
-                    <Nav>
-                        <Nav.Link href="/login">Login</Nav.Link>
-                        <Nav.Link href="/register">Register</Nav.Link>
-                    </Nav>
                 </Navbar.Collapse>
+                {!!user ? <LoggedForm user={user} /> : <LoginRegisterNav />}
             </Container> 
         </Navbar>
     )

@@ -2,9 +2,12 @@ import app from "../firebase/clientApp"
 import { useRouter } from "next/router"
 import { getAuth } from "firebase/auth"
 import { useState } from "react"
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+import { useAuthState, useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 import NavBar from "../components/NavBar"
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap"
+import Loading from "../components/Loading"
+
+const auth = getAuth(app)
 
 function RegisterButton({create, credentials}) {
     const btnOnClick = () => create(credentials.email, credentials.password)    
@@ -15,12 +18,12 @@ function RegisterButton({create, credentials}) {
 
     if (valid)
         return (
-            <Button onClick={btnOnClick}>
+            <Button onClick={() => {btnOnClick()}}>
                 Inregistreaza-te
             </Button>
         )
     return (
-        <Button onClick={btnOnClick} disabled>
+        <Button disabled>
             Inregistreaza-te
         </Button>
     )
@@ -33,6 +36,7 @@ export default function Register() {
         loading,
         error,
     ] = useCreateUserWithEmailAndPassword(getAuth(app));
+    const [stateUser, stateLoading, stateError] = useAuthState(auth)
 
     //fields
     const [fname, setFName] = useState("")
@@ -42,21 +46,15 @@ export default function Register() {
     const [cpassword, setCPassword] = useState("")
 
     //other states
-    const [valid, setValid] = useState(false)
     const router = useRouter()
 
-    if (user)
+    if (user || !!stateUser)
         router.push("/login")
     if (loading)
         return (
             <>
                 <NavBar />
-                <div className="my-5 text-center">
-                    <h2>Loading</h2> 
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </div>
+                <Loading />
             </>
         )
     return (
