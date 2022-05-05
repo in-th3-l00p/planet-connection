@@ -1,13 +1,10 @@
-import app from "../firebase/clientApp"
+import { auth } from "../firebase/clientApp"
 import { useRouter } from "next/router"
-import { getAuth } from "firebase/auth"
 import { useState } from "react"
 import { useAuthState, useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
 import NavBar from "../components/NavBar"
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap"
 import Loading from "../components/Loading"
-
-const auth = getAuth(app)
 
 function RegisterButton({create, credentials}) {
     const btnOnClick = () => create(credentials.email, credentials.password)    
@@ -35,7 +32,7 @@ export default function Register() {
         user,
         loading,
         error,
-    ] = useCreateUserWithEmailAndPassword(getAuth(app));
+    ] = useCreateUserWithEmailAndPassword(auth);
     const [stateUser, stateLoading, stateError] = useAuthState(auth)
 
     //fields

@@ -1,13 +1,10 @@
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { useAuthState, useSignInWithEmailAndPassword } from "react-firebase-hooks/auth"
-import app from "../firebase/clientApp"
-import { getAuth } from "firebase/auth"
+import { auth } from "../firebase/clientApp"
 import NavBar from "../components/NavBar"
 import { Container, Form, Button, Alert } from "react-bootstrap"
 import Loading from "../components/Loading"
-
-const auth = getAuth(app)
 
 export default function Login() {
     const router = useRouter()
