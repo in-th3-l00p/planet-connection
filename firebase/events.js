@@ -1,18 +1,22 @@
 import { db } from "./clientApp"
 import { addDoc, collection } from "firebase/firestore"
+import { auth } from "./clientApp"
 import { useState } from "react"
 
-export function useEventAdder(title) {
-    const [docRef, setDocRef] = useState(undefined)
+export function useEventAdder() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(undefined)
 
     const addEvent = async (title) => {
+        if (!auth.currentUser) {
+            setError("not logged in")
+            return
+        }
+
         setLoading(true)
-        setErorr(undefined)
+        setError(undefined)
         try {
-            const docRef = await addDoc(collection(db, "events"), {title})
-            setDocRef(docRef)
+            await addDoc(collection(db, "events"), {title})
         } catch (err) {
             setError(err)
         } finally {
@@ -20,5 +24,5 @@ export function useEventAdder(title) {
         }
     }
 
-    return [addEvent, docRef, loading, error]
+    return [addEvent, loading, error]
 }

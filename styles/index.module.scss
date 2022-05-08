@@ -1,0 +1,27 @@
+$xs: 0;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+$xxl: 1400px;
+
+.image {
+    overflow: hidden;
+    width: 100vw;
+
+    @media only screen and (max-width: $sm) {
+        height: 10rem;
+    }
+
+    @media only screen and(max-width: $lg) {
+        height: 20rem;
+    }
+
+    @media only screen and(max-width: $xl) {
+        height: 25rem;
+    }
+
+    @media screen and(min-width: $xl) {
+        height: 40rem; 
+    }
+}

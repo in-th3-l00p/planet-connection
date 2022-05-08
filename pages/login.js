@@ -13,9 +13,9 @@ export default function Login() {
     const [signIn, user, loading, error] = useSignInWithEmailAndPassword(auth);
     const [stateUser, stateLoading, stateError] = useAuthState(auth)
 
-    if (user || !!stateUser)
+    if (user || stateUser)
         router.push("/")
-    if (loading)
+    if (loading || stateLoading)
         return (
             <>
                 <NavBar />

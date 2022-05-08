@@ -1,10 +1,17 @@
 import { useState } from "react"
-import { addEvent } from "../firebase/events"
-import { Button, Modal, Container, Form, FloatingLabel } from "react-bootstrap"
+import { useEventAdder } from "../firebase/events"
+
+import { db } from "../firebase/clientApp"
+import { collection } from "firebase/firestore"
+import { useCollection } from "react-firebase-hooks/firestore"
+
+import { Button, Modal, Container, Form, FloatingLabel, Alert } from "react-bootstrap"
 import NavBar from "../components/NavBar"
 
 function EventAdder({show, hide}) {
     const [title, setTitle] = useState("")
+    const [addEvent, loading, error] = useEventAdder()
+
     return (
             <Modal show={show} onHide={hide}>
                 <Modal.Header closeButton>
@@ -26,7 +33,7 @@ function EventAdder({show, hide}) {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button>Adauga</Button>
+                    <Button onClick={() => {addEvent(title); hide()}}>Adauga</Button>
                     <Button variant="secondary" onClick={hide}>Inchide</Button>
                 </Modal.Footer>
             </Modal>
@@ -49,10 +56,33 @@ function ControlMenu() {
     )
 }
 
+function Event({ children }) {
+    return <p>{children}</p>
+}
+
 function EventsList() {
+    const [value, loading, error] = useCollection(collection(db, "events"))
+
+    //handling loading time or errors
+    if (loading)
+        return (
+            <Container fluid>
+                <h2 className="text-center mt-3">
+                    Se incarca evenimentele...
+                </h2>
+            </Container>
+        )
+    if (error)
+        return (
+            <Alert variant="danger">
+                Evenimentele nu au putut fi incarcate: {error.message}
+            </Alert>
+        )
+
+    //finally showing each event
     return (
-        <Container fluid>
-            <p>test</p>
+        <Container className="border ms-3" fluid>
+            {value.docs.map((doc) => <Event key={doc.id}>{doc.data().title}</Event>)}
         </Container>
     )
 }

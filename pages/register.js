@@ -1,16 +1,19 @@
-import { auth } from "../firebase/clientApp"
 import { useRouter } from "next/router"
 import { useState } from "react"
-import { useAuthState, useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth"
+
+import { auth } from "../firebase/clientApp"
+import { useAuthState } from "react-firebase-hooks/auth"
+import useCreateUser from "../firebase/registration"
+
 import NavBar from "../components/NavBar"
 import { Container, Form, Button, Alert, Spinner } from "react-bootstrap"
 import Loading from "../components/Loading"
 
 function RegisterButton({create, credentials}) {
-    const btnOnClick = () => create(credentials.email, credentials.password)    
+    const btnOnClick = () => create(credentials)
     let valid = (
-        credentials.fname && credentials.name && credentials.email &&
-        credentials.password && credentials.password == credentials.cpassword
+        credentials.firstName && credentials.name && credentials.email &&
+        credentials.password && credentials.password == credentials.confirmPassowrd
     )
 
     if (valid)
@@ -27,14 +30,14 @@ function RegisterButton({create, credentials}) {
 }
 
 export default function Register() {
-    const [
-        createUserWithEmailAndPassword,
-        user,
-        loading,
-        error,
-    ] = useCreateUserWithEmailAndPassword(auth);
-    const [stateUser, stateLoading, stateError] = useAuthState(auth)
+    const router = useRouter()
 
+    //for authentification
+    const [createUser, user, loading, error] = useCreateUser()
+    const [authUser, authLoading, authError] = useAuthState(auth)
+    if (authUser || user)
+        router.push("/")
+ 
     //fields
     const [fname, setFName] = useState("")
     const [name, setName] = useState("")
@@ -42,12 +45,7 @@ export default function Register() {
     const [password, setPassword] = useState("")
     const [cpassword, setCPassword] = useState("")
 
-    //other states
-    const router = useRouter()
-
-    if (user || !!stateUser)
-        router.push("/login")
-    if (loading)
+    if (authUser || authLoading || user || loading)
         return (
             <>
                 <NavBar />
@@ -99,8 +97,14 @@ export default function Register() {
                     </Form.Group>
 
                     <RegisterButton
-                        create={createUserWithEmailAndPassword} 
-                        credentials={{fname, name, email, password, cpassword}} 
+                        create={createUser}
+                        credentials={{
+                            firstName: fname,
+                            name: name,
+                            email: email,
+                            password: password,
+                            confirmPassowrd: cpassword
+                        }} 
                     />
                 </Container>
             </Form>
